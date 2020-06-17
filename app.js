@@ -1,32 +1,19 @@
 // Requires
 var express = require("express");
-var mongoose = require("mongoose");
+var bodyParser = require("body-parser");
 
-// Inizializar variables
 var app = express();
 
-// Conexión a la base de datos
-mongoose.connect(
-  "mongodb://localhost:27017/hospitalDB",
-  { useNewUrlParser: true, useUnifiedTopology: true },
-  (err, res) => {
-    if (err) throw err;
-    console.log("Base de datos: \x1b[32m%s\x1b[0m", " online");
-  }
-);
+// Body-Parser
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+
+// Importar rutas
+var appRoutes = require("./routes/app");
+var usuarioRoutes = require("./routes/usuario");
 
 // Routes
-app.get("/", (req, res, next) => {
-  res.status(200).json({
-    ok: true,
-    mensaje: "Petición realizada correctamente.",
-  });
-});
+app.use("/usuario", usuarioRoutes);
+app.use("/", appRoutes);
 
-// Listening
-app.listen(3000, () => {
-  console.log(
-    "Express server escuchando en el puerto 3000: \x1b[32m%s\x1b[0m",
-    " online"
-  );
-});
+module.exports = app;
