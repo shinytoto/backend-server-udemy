@@ -19,21 +19,21 @@ app.post("/", (req, res) => {
     if (err)
       return res.status(500).json({
         ok: false,
-        message: "Error al buscar usuarios",
+        mensaje: "Error al buscar usuarios",
         errors: err,
       });
 
     if (!usuarioDB)
       return res.status(400).json({
         ok: false,
-        message: "Credenciales Incorrectas - email",
+        mensaje: "Credenciales Incorrectas - email",
         errors: err,
       });
 
     if (!bcrypt.compareSync(body.password, usuarioDB.password))
       return res.status(400).json({
         ok: false,
-        message: "Credenciales Incorrectas - password",
+        mensaje: "Credenciales Incorrectas - password",
         errors: err,
       });
 

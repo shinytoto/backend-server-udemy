@@ -5,7 +5,7 @@ var Schema = mongoose.Schema;
 
 var rolesValidos = {
   values: ["ADMIN_ROLE", "USER_ROLE"],
-  message: "{VALUE} no es un rol válido.",
+  mensaje: "{VALUE} no es un rol válido.",
 };
 
 var usuarioSchema = new Schema({
@@ -16,6 +16,6 @@ var usuarioSchema = new Schema({
   role: { type: String, required: true, default: "USER_ROLE", enum: rolesValidos },
 });
 
-usuarioSchema.plugin(uniqueValidator, { message: "{PATH} debe ser único." });
+usuarioSchema.plugin(uniqueValidator, { mensaje: "{PATH} debe ser único." });
 
 module.exports = mongoose.model("Usuario", usuarioSchema);

@@ -1,6 +1,5 @@
 var express = require("express");
 var bcrypt = require("bcryptjs");
-var jwt = require("jsonwebtoken");
 
 var auth = require("../middlewares/auth");
 
@@ -13,19 +12,28 @@ var Usuario = require("../models/usuario");
 //  ============================  //
 
 app.get("/", (req, res, next) => {
-  Usuario.find({}, "nombre email img role").exec((err, usuarios) => {
-    if (err)
-      return res.status(500).json({
-        ok: false,
-        mensaje: "Error cargando usuarios",
-        errors: err,
-      });
+  var desde = req.query.desde || 0;
+  desde = Number(desde);
 
-    res.status(200).json({
-      ok: true,
-      usuarios,
+  Usuario.find({}, "nombre email img role")
+    .skip(desde)
+    .limit(5)
+    .exec((err, usuarios) => {
+      if (err)
+        return res.status(500).json({
+          ok: false,
+          mensaje: "Error cargando usuarios",
+          errors: err,
+        });
+
+      Usuario.count({}, (err, conteo) => {
+        res.status(200).json({
+          ok: true,
+          usuarios,
+          totalItems: conteo,
+        });
+      });
     });
-  });
 });
 
 //  ========================  //
@@ -78,7 +86,7 @@ app.put("/:id", auth.verificaToken, (req, res) => {
       return res.status(400).json({
         ok: false,
         mensaje: "El usuario con el id" + userId + " no se encontró.",
-        errors: { message: "No existe un usuario con ese id." },
+        errors: { mensaje: "No existe un usuario con ese id." },
       });
 
     usuario.nombre = body.nombre;
@@ -120,7 +128,7 @@ app.delete("/:id", auth.verificaToken, (req, res) => {
       return res.status(400).json({
         ok: false,
         mensaje: "No existe un usuario con el id:" + userId,
-        errors: { message: "No existe un usuario con ese id." },
+        errors: { mensaje: "No existe un usuario con ese id." },
       });
 
     res.status(200).json({
