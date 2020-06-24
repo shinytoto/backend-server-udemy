@@ -1,5 +1,7 @@
 // Requires
 var mongoose = require("mongoose");
+mongoose.set("useCreateIndex", true);
+
 var app = require("./app");
 var port = 3000;
 
