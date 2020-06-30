@@ -24,6 +24,7 @@ app.post("/google", async (req, res) => {
     return res.status(403).json({
       ok: false,
       mensaje: "Token no válido.",
+      errors: err,
     });
   });
 
@@ -55,15 +56,22 @@ app.post("/google", async (req, res) => {
       }
     } else {
       // El usuario no existe... hay que crearlo
-      var usuario = new Usuario();
-
-      usuario.nombre = googleUser.nombre;
-      usuario.email = googleUser.email;
-      usuario.img = googleUser.img;
-      usuario.google = true;
-      usuario.password = undefined;
+      var usuario = new Usuario({
+        nombre: googleUser.nombre,
+        email: googleUser.email,
+        img: googleUser.img,
+        google: true,
+        password: ";)",
+      });
 
       usuario.save((err, usuarioDB) => {
+        if (err)
+          return res.status(500).send({
+            ok: false,
+            mensaje: "Error al guardar usuario con Google SignIn",
+            errors: err,
+          });
+
         var token = jwt.sign({ usuario: usuarioDB }, SEED, {
           expiresIn: 14400,
         });
@@ -77,20 +85,12 @@ app.post("/google", async (req, res) => {
       });
     }
   });
-
-  // return res.status(200).json({
-  //   ok: true,
-  //   mensaje: "Funciona.",
-  //   googleUser: googleUser,
-  // });
 });
 
 async function verify(token) {
   const ticket = await client.verifyIdToken({
     idToken: token,
-    audience: CLIENT_ID, // Specify the CLIENT_ID of the app that accesses the backend
-    // Or, if multiple clients access the backend:
-    //[CLIENT_ID_1, CLIENT_ID_2, CLIENT_ID_3]
+    audience: CLIENT_ID,
   });
   const payload = ticket.getPayload();
   // const userid = payload["sub"];
@@ -104,7 +104,7 @@ async function verify(token) {
     google: true,
   };
 }
-verify().catch(console.error);
+// verify().catch(console.error);
 
 //  ====================  //
 //  *Loguear al usuario*  //
