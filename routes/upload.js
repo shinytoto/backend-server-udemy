@@ -2,13 +2,9 @@ var express = require("express");
 var fileUpload = require("express-fileupload");
 var fs = require("fs");
 
-var auth = require("../middlewares/auth");
-
 var Usuario = require("../models/usuario");
 var Medico = require("../models/medico");
 var Hospital = require("../models/hospital");
-const usuario = require("../models/usuario");
-const medico = require("../models/medico");
 
 var app = express();
 

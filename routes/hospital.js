@@ -36,6 +36,37 @@ app.get("/", (req, res, next) => {
     });
 });
 
+// ================== //
+// *Obtener Hospital* //
+// ================== //
+
+app.get("/:id", (req, res) => {
+  var hospitalId = req.params.id;
+
+  Hospital.findById(hospitalId)
+    .populate("usuario", "nombre img email")
+    .exec((err, hospital) => {
+      if (err)
+        return res.status(500).json({
+          ok: false,
+          mensaje: "Error al obtener hospital.",
+          errors: err,
+        });
+
+      if (!hospital)
+        return res.status(400).json({
+          ok: false,
+          mensaje:
+            "No se ha obtenido el hospital, asegúrese de dígitar correctamente los parámetros.",
+        });
+
+      res.status(200).json({
+        ok: true,
+        hospital,
+      });
+    });
+});
+
 //  =========================  //
 //  *Crear un nuevo hospital*  //
 //  =========================  //
